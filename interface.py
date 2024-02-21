@@ -26,9 +26,10 @@ class FourGame():
     # return: boolean
     def play(self, collum, symbol):
         self.__insertSymbol(collum, symbol)
+        # Evaluate Code (A* and MCTS)
 
 
-game = FourGame(7, 7)
+game = FourGame(7, 6)
 game.play(2, 'X')
 game.play(2, 'X')
 game.play(3, 'X')
