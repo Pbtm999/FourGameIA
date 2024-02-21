@@ -4,6 +4,7 @@ class FourGame():
         self.matrix = [['-' for _ in range(collums)] for _ in range(lines)]
         self.collums = collums
         self.lines = lines
+        self.plays = 0
 
     # params: self: Class FourGame instance
     def __str__(self): # returns the string who graphicly represents the matrix of the game
@@ -16,22 +17,74 @@ class FourGame():
 
     # params: self: Class FourGame instance | collum: integer number of collum to play | character symbol ('X', 'O')
     def __insertSymbol(self, collum, symbol): # private method to insert a symbol into the array
-        collum -= 1 # reduce one since the array starts at 0
         for i in range(self.lines-1, -1, -1):
             if self.matrix[i][collum] == '-':
                 self.matrix[i][collum] = symbol
-                break
+                return i
+        return -1 # retuns in case the collum is full
+
+    def __checkRepetions(self, length, line, collum, linei, collumi, symbol):
+        count = 0
+        for _ in range(length, 0, -1):
+            if self.matrix[line][collum] == '-': 
+                return False
+            if self.matrix[line][collum] == symbol: 
+                count += 1
+            else: 
+                count = 0
+            collum += collumi 
+            line += linei 
+            
+            if count == 4: return True
+
+
+
+        return False
+
+    def __checkWin(self, collum, line, symbol):
+        return self.__checkRepetions(self.lines, self.lines-1, collum, -1, 0, symbol) or self.__checkRepetions(self.collums, line, 0, 0, 1, symbol) # first checks collums secound check the collums
     
     # params: self: Class FourGame instance | collum: integer number of collum to play | character symbol ('X', 'O')
-    # return: boolean
-    def play(self, collum, symbol):
-        self.__insertSymbol(collum, symbol)
+    # return: string or false
+    def makeMove(self, collum, symbol):
+        self.plays += 1
+        
+        line = self.__insertSymbol(collum, symbol)
+        if line == -1: return -1, '' # invalid move the collum is full
+
         # Evaluate Code (A* and MCTS)
+        
+        # Verify if it should end the game (in case of someone win or the board is full)
+        if self.__checkWin(collum, line, symbol): 
+            return 2, symbol
+        elif (self.plays == self.collums*self.lines): 
+            return 1, ''
+        return 0, ''
 
 
 game = FourGame(7, 6)
-game.play(2, 'X')
-game.play(2, 'X')
-game.play(3, 'X')
-game.play(4, 'O')
-print(game)
+end = False
+move = 'X'
+
+while not end:
+    col = int (input('Coluna: '))
+    result, winner = game.makeMove(col, move)
+
+    print(game)
+
+    match result:
+        case -1:
+            end = True
+            print("Invalid Move!")
+            break
+        case 0:
+            print("Nice Move!")
+        case 1:
+            end = True
+            print("It's a Draw!!")
+        case 2:
+            end = True
+            print('The symbol ' + winner + ' just won!')
+        
+    if move == 'X': move = 'O'
+    else: move = 'X'
