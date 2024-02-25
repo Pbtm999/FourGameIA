@@ -1,90 +1,112 @@
 class FourGame():
-    # params: self: Class FourGame instance | collums: integer number of collums for the game | lines: integer number of lines for the game
-    def __init__(self, collums, lines): # class constructor in python (there is no need to declare the attributes since the self.attribute do it for us)
-        self.matrix = [['-' for _ in range(collums)] for _ in range(lines)]
-        self.collums = collums
+    # Parameters | self: Class FourGame instance | columns: Integer number of columns for the game | lines: Integer number of lines for the game
+    def __init__(self, columns, lines):  # Class constructor (there is no need to declare the attributes since the self.attribute does it for us)
+        self.matrix = [['-' for _ in range(columns)] for _ in range(lines)]
+        self.columns = columns
         self.lines = lines
         self.plays = 0
 
-    # params: self: Class FourGame instance
-    def __str__(self): # returns the string who graphicly represents the matrix of the game
+    # Parameters | self: Class FourGame instance
+    def __str__(self):  # Returns the string who graphically represents the matrix of the game
         str = ""
-        for line in self.matrix: # iterate through the collums
-            for sign in line: # iterate through the lines
+        for line in self.matrix:  # Iterate through the columns
+            for sign in line:  # Iterate through the lines
                 str += sign
             str += "\n"
         return str
 
-    # params: self: Class FourGame instance | collum: integer number of collum to play | character symbol ('X', 'O')
-    def __insertSymbol(self, collum, symbol): # private method to insert a symbol into the array
+    # Parameters | self: Class FourGame instance | column: Integer number of column to play | Character symbol ('X', 'O')
+    def __insertSymbol(self, column, symbol):  # Private method to insert a symbol into the array
         for i in range(self.lines-1, -1, -1):
-            if self.matrix[i][collum] == '-':
-                self.matrix[i][collum] = symbol
+            if self.matrix[i][column] == '-':
+                self.matrix[i][column] = symbol
                 return i
-        return -1 # retuns in case the collum is full
+        return -1  # Retuns in case the column is full
 
-    def __checkRepetions(self, length, line, collum, linei, collumi, symbol):
+    def __checkRepetions(self, length, line, column, lineCount, columnCount, symbol):
         count = 0
         for _ in range(length, 0, -1):
-            if self.matrix[line][collum] == '-': 
+            if self.matrix[line][column] == '-': 
                 return False
-            if self.matrix[line][collum] == symbol: 
+            if self.matrix[line][column] == symbol: 
                 count += 1
             else: 
                 count = 0
-            collum += collumi 
-            line += linei 
+            column += columnCount
+            line += lineCount
             
             if count == 4: return True
 
-
-
         return False
-
-    def __checkWin(self, collum, line, symbol):
-        return self.__checkRepetions(self.lines, self.lines-1, collum, -1, 0, symbol) or self.__checkRepetions(self.collums, line, 0, 0, 1, symbol) # first checks collums secound check the collums
     
-    # params: self: Class FourGame instance | collum: integer number of collum to play | character symbol ('X', 'O')
-    # return: string or false
-    def makeMove(self, collum, symbol):
+    def __checkWin(self, column, line, symbol):
+        # Check for win horizontally
+        if self.__checkRepetions(self.columns, line, 0, 0, 1, symbol):
+            return True
+        
+        # Check for win vertically
+        if self.__checkRepetions(self.lines, self.lines-1, column, -1, 0, symbol):
+            return True
+
+        # Check for win diagonally
+        """
+        if self.__checkDiagonalWin(line, column, symbol):
+            return True
+        """
+        return False
+    
+    # Parameters | self: Class FourGame instance | column: Integer number of column to play | Character symbol ('X', 'O')
+    # Return: string or false
+    def makeMove(self, column, symbol):
         self.plays += 1
         
-        line = self.__insertSymbol(collum, symbol)
-        if line == -1: return -1, '' # invalid move the collum is full
+        line = self.__insertSymbol(column - 1, symbol)
+        if line == -1: return -1, ''  # Invalid move, the column is full
 
         # Evaluate Code (A* and MCTS)
         
-        # Verify if it should end the game (in case of someone win or the board is full)
-        if self.__checkWin(collum, line, symbol): 
+        # Verify if it should end the game (in case if someone wins or the board is full)
+        if self.__checkWin(column - 1, line, symbol): 
             return 2, symbol
-        elif (self.plays == self.collums*self.lines): 
+        elif (self.plays == self.columns*self.lines): 
             return 1, ''
         return 0, ''
 
+def main():
+    game = FourGame(7, 6)  # Creates a new game instance
+    end = False  # Initialize end to False to indicate that the game is not finished
+    move = 'X'  # Initialize the first move as 'X'
 
-game = FourGame(7, 6)
-end = False
-move = 'X'
+    while not end:
+        while True:  # Loop to handle input until a valid move is made
+            try:
+                col = int(input('Column: '))
+                if col < 1 or col > 7:
+                    raise ValueError  # Raise a ValueError if the input isn't in the range 1-7
+                break
+            except ValueError:
+                print("Invalid Input! Please enter a number from 1 to 7.")
 
-while not end:
-    col = int (input('Coluna: '))
-    result, winner = game.makeMove(col, move)
+        result, winner = game.makeMove(col, move)  # Make a move in a certain column
 
-    print(game)
+        print(game)  # Print the current state of the game board
 
-    match result:
-        case -1:
-            end = True
-            print("Invalid Move!")
-            break
-        case 0:
-            print("Nice Move!")
-        case 1:
-            end = True
-            print("It's a Draw!!")
-        case 2:
-            end = True
-            print('The symbol ' + winner + ' just won!')
-        
-    if move == 'X': move = 'O'
-    else: move = 'X'
+        match result:
+            case -1:  # Case when a column is full
+                print("Invalid Move! Please choose another column.")
+            case 0:  # Case for when a valid move is done
+                print("Nice Move!")
+            case 1:  # Case for a draw
+                end = True
+                print("It's a Draw!!")
+            case 2:  # Case for a win
+                end = True
+                print('The symbol ' + winner + ' just won!')
+
+        if move == 'X':
+            move = 'O'
+        else:
+            move = 'X'
+
+if __name__ == '__main__':
+    main()
