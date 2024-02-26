@@ -23,7 +23,7 @@ class FourGame():
                 return i
         return -1  # Retuns in case the column is full
 
-    def __checkRepetions(self, length, line, column, lineCount, columnCount, symbol):
+    def __checkRepetitions(self, length, line, column, lineCount, columnCount, symbol):
         count = 0
         for _ in range(length, 0, -1):
             if self.matrix[line][column] == '-': 
@@ -38,14 +38,14 @@ class FourGame():
             if count == 4: return True
 
         return False
-    
+        
     def __checkWin(self, column, line, symbol):
         # Check for win horizontally
-        if self.__checkRepetions(self.columns, line, 0, 0, 1, symbol):
+        if self.__checkRepetitions(self.columns, line, 0, 0, 1, symbol):
             return True
         
         # Check for win vertically
-        if self.__checkRepetions(self.lines, self.lines-1, column, -1, 0, symbol):
+        if self.__checkRepetitions(self.lines, self.lines-1, column, -1, 0, symbol):
             return True
 
         # Check for win diagonally
