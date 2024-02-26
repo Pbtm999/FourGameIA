@@ -38,7 +38,7 @@ class FourGame():
             if count == 4: return True
 
         return False
-        
+    
     def __checkWin(self, column, line, symbol):
         # Check for win horizontally
         if self.__checkRepetitions(self.columns, line, 0, 0, 1, symbol):
@@ -48,20 +48,16 @@ class FourGame():
         if self.__checkRepetitions(self.lines, self.lines-1, column, -1, 0, symbol):
             return True
 
-        # Check for win diagonally
-        """
-        if self.__checkDiagonalWin(line, column, symbol):
-            return True
-        """
         return False
     
     # Parameters | self: Class FourGame instance | column: Integer number of column to play | Character symbol ('X', 'O')
     # Return: string or false
     def makeMove(self, column, symbol):
-        self.plays += 1
         
         line = self.__insertSymbol(column - 1, symbol)
         if line == -1: return -1, ''  # Invalid move, the column is full
+
+        self.plays += 1
 
         # Evaluate Code (A* and MCTS)
         
