@@ -24,77 +24,50 @@ class FourGame():
                 self.matrix[i][column] = symbol
                 return i
         return -1  # Returns in case the column is full
-    
-
-    def __checkWinDiagonal1(self, lines,columns, symbol):
-        for x in range(lines - 3):
-            for y in range(3, columns):
-                if (self.matrix[x][y] == symbol and self.matrix[x+1][y+1]==symbol and self.matrix[x+2][y+2]==symbol and self.matrix[x+3][y+3]==symbol):
-                    return True
-                
-
-    def __checkWinDiagonal2(self, lines,columns, symbol):
-        for x in range(lines - 3):
-            for y in range(3, columns):
-                if (self.matrix[x][y] == symbol and self.matrix[x+1][y-1]==symbol and self.matrix[x+2][y-2]==symbol and self.matrix[x+3][y-3]==symbol):
-                    return True
-
-
 
     def __checkRepetitions(self, length, line, column, lineCount, columnCount, symbol):
         count = 0
         for _ in range(length, 0, -1):
+            print(column, line)
+            #Check if is out of bound only needed for diagonal
+            if column >= self.columns or column < 0 or line >= self.lines or line < 0: return False
             if self.matrix[line][column] == '-': 
                 return False
             if self.matrix[line][column] == symbol: 
                 count += 1
             else: 
-                count = 0
+                return False
             column += columnCount
             line += lineCount
             
             if count == 4: return True
-
-        return False
     
 
     def __checkWin(self, column, line, symbol):
-        # Check for win horizontally
-        if self.__checkRepetitions(self.columns, line, 0, 0, 1, symbol):
-            return True
-        
+
         # Check for win vertically
         if self.__checkRepetitions(self.lines, self.lines-1, column, -1, 0, symbol):
             return True
-
-        # Check for win diagonally
-        if self.__checkWinDiagonal1(self.lines, self.columns, symbol):
-            return True
-        if self.__checkWinDiagonal2(self.lines, self.columns, symbol):
+            
+        # Check for win horizontally for both sides
+        if self.__checkRepetitions(self.columns-column, line, column, 0, 1, symbol) or self.__checkRepetitions(column, line, column, 0, -1, symbol):
             return True
         
-
-        """
-        bottom left para top right
-
-        if self.__checkDiagonalWin(self,line, column, symbol):
+        # Check for win diagonally for both sides
+        if self.__checkRepetitions(6, line, column, -1, 1, symbol) or self.__checkRepetitions(6, line, column, 1, -1, symbol):
             return True
-        """
+        
         return False
+        
     
-                
-   # def __checkWinDiagonal2(self, lines, columns, symbol):
-        
-        
-
-
     # Parameters | self: Class FourGame instance | column: Integer number of column to play | Character symbol ('X', 'O')
     # Return: string or false
     def makeMove(self, column, symbol):
-        self.plays += 1
         
         line = self.__insertSymbol(column - 1, symbol)
         if line == -1: return -1, ''  # Invalid move, the column is full
+
+        self.plays += 1
 
         # Evaluate Code (A* and MCTS)
         
