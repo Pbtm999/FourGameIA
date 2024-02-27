@@ -28,7 +28,6 @@ class FourGame():
     def __checkRepetitions(self, length, line, column, lineCount, columnCount, symbol):
         count = 0
         for _ in range(length, 0, -1):
-            print(column, line)
             #Check if is out of bound only needed for diagonal
             if column >= self.columns or column < 0 or line >= self.lines or line < 0: return False
             if self.matrix[line][column] == '-': 
@@ -53,8 +52,12 @@ class FourGame():
         if self.__checkRepetitions(self.columns-column, line, column, 0, 1, symbol) or self.__checkRepetitions(column, line, column, 0, -1, symbol):
             return True
         
-        # Check for win diagonally for both sides
+        # Check for win main diagonal for both sides
         if self.__checkRepetitions(6, line, column, -1, 1, symbol) or self.__checkRepetitions(6, line, column, 1, -1, symbol):
+            return True
+
+        # Check for win inverse diagonal for both sides
+        if self.__checkRepetitions(6, line, column, -1, -1, symbol) or self.__checkRepetitions(6, line, column, 1, 1, symbol):
             return True
         
         return False
