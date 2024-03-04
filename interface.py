@@ -1,3 +1,5 @@
+from graph import Graph
+
 class FourGame():
     # Parameters | self: Class FourGame instance | columns: Integer number of columns for the game | lines: Integer number of lines for the game
     def __init__(self, columns, lines):  # Class constructor (there is no need to declare the attributes since the self.attribute does it for us)
