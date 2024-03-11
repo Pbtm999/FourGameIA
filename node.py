@@ -1,7 +1,8 @@
 class Node():
 
-    def __init__(self, value):
+    def __init__(self, value, vector):
         self.value = value
+        self.coords = vector
         self.next = None
         self.inlineNext = None
     
@@ -10,6 +11,12 @@ class Node():
 
     def getValue(self):
         return self.value
+
+    def setCoords(self, vector):
+        self.coords = vector
+
+    def getCoords(self):
+        return self.coords
 
     def setNext(self, next):
         self.next = next
