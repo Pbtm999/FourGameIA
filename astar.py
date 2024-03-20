@@ -10,35 +10,38 @@ class Astar():
         for i in range(1, 7):
             self.graph.addInLineNext(Node(0, Vector(i, 0)), 0)
 
-    def __heuristicCalculate(self):
+    def __heuristicCalculate(self, game):
 
-    def __bestMove(self):
+    def __bestMove(self, game):
+
         bestNode = self.graph.first
-        bestNode.setValue(self.__heuristicCalculate()) # falta o calculo da heuristica
+        while (bestNode.getCoords().getY() >= 6):
+            bestNode.getNext()
+
+        bestNode.setValue(self.__heuristicCalculate(game)) # falta o calculo da heuristica
         bestNodeHeuristic = bestNode.getValue()
 
-        cur = self.graph.first.getNext()
+        cur = bestNode.getNext()
 
         while (cur != None):
-            cur.setValue(self.__heuristicCalculate()) # falta o calculo da heuristica
-            value = cur.getValue()
-            if symbol == 'O' and bestNodeHeuristic > value:
-                bestNodeHeuristic = value
-            elif symbol == 'X' and bestNodeHeuristic < value:
-                bestNodeHeuristic = value
+            if cur.getCoords().getY() < 6:
+                cur.setValue(self.__heuristicCalculate(game)) # falta o calculo da heuristica
+                value = cur.getValue()
+                if symbol == 'O' and bestNodeHeuristic > value:
+                    bestNodeHeuristic = value
+                elif symbol == 'X' and bestNodeHeuristic < value:
+                    bestNodeHeuristic = value
 
             cur = cur.getNext()
         
         return bestNode
         
 
-    def play(self, x, y):
+    def play(self, game, x, y):
         
         cur = self.graph.first
         for _ in range(x):
             cur = cur.getNext()
         
         cur.setCoords(Vector(x, y+1))
-        return self.__bestMove()
-        	
-Astar()
+        return self.__bestMove(game)
