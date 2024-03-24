@@ -1,47 +1,40 @@
-from graph import Graph
+from queue import Queue
 from node import Node
 from vector import Vector
+from heuristic import heuristicCalculate
 
 class Astar():
 
-    def __init__(self):
-        self.graph = Graph()
-        self.graph.setFirst(Node(0, Vector(0, 0)))
-        for i in range(1, 7):
-            self.graph.addInLineNext(Node(0, Vector(i, 0)), 0)
+    def __init__(self, symbol):
+        self.frontier = Queue()
+        self.symbol = symbol
+    
+    def __bestMove(self):
 
-    def __heuristicCalculate(self, game):
+        if self.frontier.isEmpty():
+            return False
 
-    def __bestMove(self, game):
+        bestMoveNode = self.frontier.pop()
+        while ((newNode := self.frontier.pop()) != None):
+            # if self.symbol == 'O' and newNode.pathCost <= bestMoveNode.pathCost:
+            if newNode.pathCost <= bestMoveNode.pathCost:
+                bestMoveNode = newNode
+            # elif self.symbol == 'X' and newNode.pathCost >= bestMoveNode.pathCost:
+            #     bestMoveNode = newNode
 
-        bestNode = self.graph.first
-        while (bestNode.getCoords().getY() >= 6):
-            bestNode.getNext()
-
-        bestNode.setValue(self.__heuristicCalculate(game)) # falta o calculo da heuristica
-        bestNodeHeuristic = bestNode.getValue()
-
-        cur = bestNode.getNext()
-
-        while (cur != None):
-            if cur.getCoords().getY() < 6:
-                cur.setValue(self.__heuristicCalculate(game)) # falta o calculo da heuristica
-                value = cur.getValue()
-                if symbol == 'O' and bestNodeHeuristic > value:
-                    bestNodeHeuristic = value
-                elif symbol == 'X' and bestNodeHeuristic < value:
-                    bestNodeHeuristic = value
-
-            cur = cur.getNext()
+        return bestMoveNode.state.getX()
         
-        return bestNode
-        
+    def __setFrontier(self, game):
+        for column in range(0,7):
+            for line in range(5,-1,-1):
+                if game[line][column] == '-':
+                    node = Node(Vector(column, line), None)
+                    node.setPathCost(heuristicCalculate(node.state, game))
+                    self.frontier.add(node)
+                    break
 
-    def play(self, game, x, y):
+    def play(self, game):
+        # if self.frontier.isEmpty(): 
+        self.__setFrontier(game)
         
-        cur = self.graph.first
-        for _ in range(x):
-            cur = cur.getNext()
-        
-        cur.setCoords(Vector(x, y+1))
-        return self.__bestMove(game)
+        return self.__bestMove()

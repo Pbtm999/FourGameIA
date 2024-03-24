@@ -1,4 +1,5 @@
 from graph import Graph
+from astar import Astar
 
 class FourGame():
     # Parameters | self: Class FourGame instance | columns: Integer number of columns for the game | lines: Integer number of lines for the game
@@ -84,13 +85,18 @@ class FourGame():
             return 1, ''
         return 0, ''
 
+    def getMatrix(self):
+        return self.matrix
+
 
 def main():
     game = FourGame(7, 6)  # Creates a new game instance
     end = False  # Initialize end to False to indicate that the game is not finished
-    move = 'X'  # Initialize the first move as 'X'
+    move = 'O'  # Initialize the first move as 'X'
+    astar = Astar('X')
 
     while not end:
+        invalid = False
         while True:  # Loop to handle input until a valid move is made
             try:
                 col = int(input('Column: '))
@@ -106,6 +112,7 @@ def main():
 
         match result:
             case -1:  # Case when a column is full
+                invalid = True
                 print("Invalid Move! Please choose another column.")
             case 0:  # Case for when a valid move is done
                 print("Nice Move!")
@@ -115,11 +122,24 @@ def main():
             case 2:  # Case for a win
                 end = True
                 print('The symbol ' + winner + ' just won!')
+        
+        if not end and not invalid:
+            result, winner = game.makeMove(astar.play(game.getMatrix())+1, 'X')  # Make a move in a certain column
 
-        if move == 'X':
-            move = 'O'
-        else:
-            move = 'X'
+            print(game)  # Print the current state of the game board
+
+            match result:
+                case -1:  # Case when a column is full
+                    print("Invalid Move! Please choose another column.")
+                case 0:  # Case for when a valid move is done
+                    print("Nice Move!")
+                case 1:  # Case for a draw
+                    end = True
+                    print("It's a Draw!!")
+                case 2:  # Case for a win
+                    end = True
+                    print('The symbol ' + winner + ' just won!')
+        
 
 
 if __name__ == '__main__':
