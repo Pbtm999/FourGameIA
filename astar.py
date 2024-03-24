@@ -29,7 +29,7 @@ class Astar():
             for line in range(5,-1,-1):
                 if game[line][column] == '-':
                     node = Node(Vector(column, line), None)
-                    node.setPathCost(heuristicCalculate(node.state, game))
+                    node.setPathCost(heuristicCalculate(node.state, game, self.symbol))
                     self.frontier.add(node)
                     break
 
