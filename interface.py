@@ -37,8 +37,8 @@ class FourGame():
                 return False
             if self.matrix[line][column] == symbol: 
                 count += 1
-            else: 
-                return False
+            else:
+                count = 0
             column += columnCount
             line += lineCount
             
@@ -74,8 +74,6 @@ class FourGame():
         if line == -1: return -1, ''  # Invalid move, the column is full
 
         self.plays += 1
-
-        # Evaluate Code (A* and MCTS)
         
         # Verify if it should end the game (in case if someone wins or the board is full)
         if self.__checkWin(column - 1, line, symbol): 
@@ -93,7 +91,8 @@ def main():
     game = FourGame(7, 6)  # Creates a new game instance
     end = False  # Initialize end to False to indicate that the game is not finished
     move = 'O'  # Initialize the first move as 'X'
-    astar = Astar('X')
+    iaSymbol = 'X'
+    astar = Astar(iaSymbol)
 
     while not end:
         invalid = False
@@ -124,7 +123,7 @@ def main():
                 print('The symbol ' + winner + ' just won!')
         
         if not end and not invalid:
-            result, winner = game.makeMove(astar.play(game.getMatrix())+1, 'X')  # Make a move in a certain column
+            result, winner = game.makeMove(astar.play(game.getMatrix())+1, iaSymbol)  # Make a move in a certain column
 
             print(game)  # Print the current state of the game board
 
