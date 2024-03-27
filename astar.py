@@ -29,10 +29,9 @@ class Astar():
 
         bestMoveNode = self.frontier.pop()
         while ((newNode := self.frontier.pop()) != None):
-            # if self.symbol == 'O' and 
-            if newNode.pathCost < bestMoveNode.pathCost:
-            #     bestMoveNode = newNode
-            # elif self.symbol == 'X' and newNode.pathCost >= bestMoveNode.pathCost:
+            if self.symbol == 'O' and newNode.pathCost < bestMoveNode.pathCost:
+                bestMoveNode = newNode
+            elif self.symbol == 'X' and newNode.pathCost > bestMoveNode.pathCost:
                 bestMoveNode = newNode
         
         self.monotocy = bestMoveNode.pathCost
