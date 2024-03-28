@@ -24,7 +24,8 @@ class MinMax():
  
         if maximizingPlayer:
             heuristicVal = self.gameAlreadyWon(frontier, actualGame, self.MaxSymbol)
-            if heuristicVal and (heuristicVal >= 512 or heuristicVal == 0): 
+            if heuristicVal and (heuristicVal >= 512 or heuristicVal == 0):
+                print(heuristicVal)
                 return heuristicVal, None
  
             max_eval = float('-inf')
@@ -33,7 +34,11 @@ class MinMax():
                 newGame = list(map(list, actualGame))
                 newGame[child.state.getY()][child.state.getX()] = self.MaxSymbol
                 eval, bestChild = self.minimax(self.set_frontier(newGame), depth - 1, False, newGame)
-                if eval != None and eval > max_eval:
+
+                if bestChild == None:
+                    eval = child.getPathCost()
+
+                if eval > max_eval:
                     max_eval = eval
                     best_move = child
             return max_eval, best_move
@@ -48,9 +53,14 @@ class MinMax():
                 newGame = list(map(list, actualGame))
                 newGame[child.state.getY()][child.state.getX()] = self.MinSymbol
                 eval, bestChild = self.minimax(self.set_frontier(newGame), depth - 1, True, newGame)
-                if eval != None and eval < min_eval:
+                
+                if bestChild == None:
+                    eval = child.getPathCost()
+                
+                if eval < min_eval:
                     min_eval = eval
                     best_move = child
+
             return min_eval, best_move
 
     def set_frontier(self, game):

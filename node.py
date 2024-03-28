@@ -7,5 +7,5 @@ class Node():
     def setPathCost(self, cost):
         self.pathCost = cost
 
-    def getPathCost(self, cost):
+    def getPathCost(self):
         return self.pathCost
