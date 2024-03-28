@@ -1,5 +1,7 @@
 def heuristicValue(count):
     match count:
+        case 4:
+            return 512
         case 3:
             return 50
         case 2:

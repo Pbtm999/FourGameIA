@@ -1,5 +1,6 @@
 from graph import Graph
 from astar import Astar
+from miniMax import MinMax
 
 class FourGame():
     # Parameters | self: Class FourGame instance | columns: Integer number of columns for the game | lines: Integer number of lines for the game
@@ -30,7 +31,7 @@ class FourGame():
 
     def __checkRepetitions(self, length, line, column, lineCount, columnCount, symbol):
         count = 0
-        for _ in range(length, 0, -1):
+        for _ in range(length, -1, -1):
             #Check if is out of bound only needed for diagonal
             if column >= self.columns or column < 0 or line >= self.lines or line < 0: return False
             if self.matrix[line][column] == '-': 
@@ -93,6 +94,7 @@ def main():
     move = 'O'  # Initialize the first move as 'X'
     iaSymbol = 'X'
     astar = Astar(iaSymbol)
+    minmax = MinMax(iaSymbol, move)
 
     while not end:
         invalid = False
@@ -123,7 +125,7 @@ def main():
                 print('The symbol ' + winner + ' just won!')
         
         if not end and not invalid:
-            result, winner = game.makeMove(astar.play(game.getMatrix())+1, iaSymbol)  # Make a move in a certain column
+            result, winner = game.makeMove(minmax.play(game.getMatrix())+1, iaSymbol)  # Make a move in a certain column
 
             print(game)  # Print the current state of the game board
 
