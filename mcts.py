@@ -1,4 +1,4 @@
-from myQueue import MyQueue
+from Queue import Queue
 from node import Node
 from vector import Vector
 import math
@@ -20,7 +20,7 @@ class MCTS():
 
     # Criar a fronteira e calcula o valor de cada nó
     def __setFrontier(self, matrix, parent):
-        frontier = MyQueue()
+        frontier = Queue()
         for column in range(0,7):
             for line in range(5,-1,-1):
                 if matrix[line][column] == '-':

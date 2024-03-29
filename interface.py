@@ -1,6 +1,7 @@
 from graph import Graph
 from astar import Astar
 from miniMax import MinMax
+from mcts import MCTS
 
 class FourGame():
     # Parameters | self: Class FourGame instance | columns: Integer number of columns for the game | lines: Integer number of lines for the game
@@ -9,6 +10,8 @@ class FourGame():
         self.columns = columns
         self.lines = lines
         self.plays = 0
+        self.toPlay = 'O'
+        self.result = None
 
 
     # Parameters | self: Class FourGame instance
@@ -28,6 +31,10 @@ class FourGame():
         for i in range(self.lines-1, -1, -1):
             if self.matrix[i][column] == '-':
                 self.matrix[i][column] = symbol
+                if symbol == 'X':
+                    self.toPlay = 'O'
+                else:
+                    self.toPlay = 'X'
                 return i
         return -1  # Returns in case the column is full
 
@@ -42,6 +49,7 @@ class FourGame():
                 columnI += columnCount
                 lineI += lineCount
                 if count == 4: 
+                    self.result = symbol
                     return True
  
             columnCount *= -1
@@ -91,6 +99,17 @@ class FourGame():
     def getMatrix(self):
         return self.matrix
 
+    def gameOver(self):
+        return self.result is not None or self.plays == self.columns * self.lines
+    
+    def getLegalMoves(self):
+        legalMoves = []
+        for i in range(7):
+            if self.matrix[5][i] == '-':
+                legalMoves.append(i)
+
+        return legalMoves
+
 
 def main():
     game = FourGame(7, 6)  # Creates a new game instance
@@ -117,7 +136,7 @@ def main():
         case 1:
             algo = Astar(iaSymbol)
         case 2:
-            algo = MTC()
+            algo = MCTS(game)
         case 3:
             algo = MinMax(iaSymbol, move)
 
