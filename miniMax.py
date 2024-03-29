@@ -11,7 +11,7 @@ class MinMax():
     
     def gameAlreadyWon(self, frontier, actualGame, symbol):
         for node in (frontier.stack):
-            heuristic = heuristicCalculate(node.state, actualGame, symbol)
+            heuristic = heuristicCalculate(actualGame, symbol)
             if heuristic >= 512 or heuristic <= -512 or heuristic == 0:
                 return heuristic
         return None
@@ -25,7 +25,6 @@ class MinMax():
         if maximizingPlayer:
             heuristicVal = self.gameAlreadyWon(frontier, actualGame, self.MaxSymbol)
             if heuristicVal and (heuristicVal >= 512 or heuristicVal == 0):
-                print(heuristicVal)
                 return heuristicVal, None
  
             max_eval = float('-inf')
@@ -69,7 +68,7 @@ class MinMax():
             for line in range(5, -1, -1):
                 if game[line][column] == '-':
                     node = Node(Vector(column, line), None)
-                    node.setPathCost(heuristicCalculate(node.state, game, self.MaxSymbol))
+                    node.setPathCost(heuristicCalculate(game, self.MaxSymbol))
                     frontier.add(node)
                     break
         return frontier
