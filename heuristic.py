@@ -41,13 +41,13 @@ def checkSymbols(x, y, xIteratorRatio, yIteratorRatio, game):
 def heuristicCalculate(state, game, symbol):
     value = 0
 
-    #check horizontaly
-    value = value + checkSymbols(state.getX(), state.getY(), 0, 1, game)
+    #check verticaly
+    value = value + checkSymbols(state.getX(), state.getY(), 0, -1, game)
     
-    #check verticaly right
+    #check horizontaly right
     value = value + checkSymbols(state.getX(), state.getY(), 1, 0, game)
     
-    #check verticaly left
+    #check horizontaly left
     value = value + checkSymbols(state.getX(), state.getY(), -1, 0, game)
 
     #check diagonal left up

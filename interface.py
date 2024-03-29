@@ -29,39 +29,42 @@ class FourGame():
                 return i
         return -1  # Returns in case the column is full
 
-    def __checkRepetitions(self, length, line, column, lineCount, columnCount, symbol):
+    def __checkRepetitions(self, line, column, lineCount, columnCount, symbol):
         count = 0
-        for _ in range(length, -1, -1):
-            #Check if is out of bound only needed for diagonal
-            if column >= self.columns or column < 0 or line >= self.lines or line < 0: return False
-            if self.matrix[line][column] == '-': 
-                return False
-            if self.matrix[line][column] == symbol: 
-                count += 1
-            else:
-                count = 0
-            column += columnCount
-            line += lineCount
-            
-            if count == 4: return True
-    
+        lineI = line
+        columnI = column
+        for _ in range(2):
 
+            while lineI <= 5 and lineI >= 0 and columnI <= 6 and column >= 0 and self.matrix[lineI][columnI] == symbol:
+                count += 1
+                columnI += columnCount
+                lineI += lineCount
+                if count == 4: 
+                    return True
+ 
+            columnCount *= -1
+            lineCount *= -1
+            columnI = column + columnCount
+            lineI = line + lineCount
+
+        return False
+    
     def __checkWin(self, column, line, symbol):
 
         # Check for win vertically
-        if self.__checkRepetitions(self.lines, self.lines-1, column, -1, 0, symbol):
+        if self.__checkRepetitions(line, column, -1, 0, symbol):
             return True
             
-        # Check for win horizontally for both sides
-        if self.__checkRepetitions(self.columns-column, line, column, 0, 1, symbol) or self.__checkRepetitions(column, line, column, 0, -1, symbol):
+        # Check for win horizontallys
+        if self.__checkRepetitions(line, column, 0, 1, symbol):
             return True
         
-        # Check for win main diagonal for both sides
-        if self.__checkRepetitions(6, line, column, -1, 1, symbol) or self.__checkRepetitions(6, line, column, 1, -1, symbol):
+        # Check for win main diagonal
+        if self.__checkRepetitions(line, column, -1, 1, symbol):
             return True
 
-        # Check for win inverse diagonal for both sides
-        if self.__checkRepetitions(6, line, column, -1, -1, symbol) or self.__checkRepetitions(6, line, column, 1, 1, symbol):
+        # Check for win inverse diagonal
+        if self.__checkRepetitions(line, column, 1, 1, symbol):
             return True
         
         return False
@@ -123,23 +126,28 @@ def main():
             case 2:  # Case for a win
                 end = True
                 print('The symbol ' + winner + ' just won!')
+            
+        # if move == 'X':
+        #     move = 'O'
+        # else:
+        #     move = 'X'
         
-        if not end and not invalid:
-            result, winner = game.makeMove(minmax.play(game.getMatrix())+1, iaSymbol)  # Make a move in a certain column
+        # if not end and not invalid:
+        #     result, winner = game.makeMove(minmax.play(game.getMatrix())+1, iaSymbol)  # Make a move in a certain column
 
-            print(game)  # Print the current state of the game board
+        #     print(game)  # Print the current state of the game board
 
-            match result:
-                case -1:  # Case when a column is full
-                    print("Invalid Move! Please choose another column.")
-                case 0:  # Case for when a valid move is done
-                    print("Nice Move!")
-                case 1:  # Case for a draw
-                    end = True
-                    print("It's a Draw!!")
-                case 2:  # Case for a win
-                    end = True
-                    print('The symbol ' + winner + ' just won!')
+        #     match result:
+        #         case -1:  # Case when a column is full
+        #             print("Invalid Move! Please choose another column.")
+        #         case 0:  # Case for when a valid move is done
+        #             print("Nice Move!")
+        #         case 1:  # Case for a draw
+        #             end = True
+        #             print("It's a Draw!!")
+        #         case 2:  # Case for a win
+        #             end = True
+        #             print('The symbol ' + winner + ' just won!')
         
 
 

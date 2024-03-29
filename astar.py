@@ -20,7 +20,7 @@ class Astar():
     def __init__(self, symbol):
         self.frontier = Queue()
         self.symbol = symbol
-        self.monotocy = (symbol == 'X' and -512) or (symbol == 'O' and 512)
+        self.monotony = (symbol == 'X' and float('-inf')) or (symbol == 'O' and float('inf'))
     
     def __bestMove(self):
 
@@ -34,7 +34,7 @@ class Astar():
             elif self.symbol == 'X' and newNode.pathCost > bestMoveNode.pathCost:
                 bestMoveNode = newNode
         
-        self.monotocy = bestMoveNode.pathCost
+        self.monotony = bestMoveNode.pathCost
 
         return bestMoveNode.state.getX()
         
@@ -44,9 +44,9 @@ class Astar():
                 if game[line][column] == '-':
                     node = Node(Vector(column, line), None)
                     if self.symbol == 'X':
-                        node.setPathCost(max(self.monotocy, heuristicCalculate(node.state, game, self.symbol)))
+                        node.setPathCost(max(self.monotony, heuristicCalculate(node.state, game, self.symbol)))
                     else:
-                        node.setPathCost(min(self.monotocy, heuristicCalculate(node.state, game, self.symbol)))
+                        node.setPathCost(min(self.monotony, heuristicCalculate(node.state, game, self.symbol)))
                     self.frontier.add(node)
                     break
 
