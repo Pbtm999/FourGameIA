@@ -10,7 +10,7 @@ class MinMax():
         self.MinSymbol = MinSymbol
     
     def gameAlreadyWon(self, frontier, actualGame, symbol):
-        for node in (frontier.stack):
+        for _ in (frontier.stack):
             heuristic = heuristicCalculate(actualGame, symbol)
             if heuristic >= 512 or heuristic <= -512 or heuristic == 0:
                 return heuristic
