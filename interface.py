@@ -168,7 +168,7 @@ def main():
                 print('The symbol ' + winner + ' just won!')
         
         if not end and not invalid:
-            result, winner = game.makeMove(algo.play(game.getMatrix())+1, iaSymbol)  # Make a move in a certain column
+            result, winner = game.makeMove(algo.play(game)+1, iaSymbol)  # Make a move in a certain column
 
             print(game)  # Print the current state of the game board
 

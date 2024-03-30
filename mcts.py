@@ -7,10 +7,9 @@ import random
 from copy import deepcopy
 
 class MCTS():
-    def __init__(self, symbol, move) -> None:
-        self.move = move
+    def __init__(self, game) -> None:
         self.frontier = None
-        self.symbol = symbol
+        self.symbol = 'X'
         self.numSimulations = 0
         self.toPlay = 'X'
         self.runTime = 0
@@ -54,7 +53,7 @@ class MCTS():
                     maxNodes.append(childrenValues[i])
 
             node = random.choice(maxNodes)
-            self.newGame.makeMove(node.move)
+            self.newGame.makeMove(node, self.symbol)
 
             if node.N == 0:
                 return node, newGame
@@ -72,7 +71,7 @@ class MCTS():
                     maxNodes.append(childrenValues[i])
 
             node = random.choice(maxNodes)
-            self.newGame.makeMove(node.move)
+            self.newGame.makeMove(node.state.getX(), self.symbol)
 
         return node, newGame
 
@@ -91,7 +90,7 @@ class MCTS():
     # Simulation
     def __simulation(self, game):
         while not game.gameOver():
-            game.makeMove(random.choice(game.getLegalMoves()))
+            game.makeMove(random.choice(game.getLegalMoves()), self.symbol)
 
         result = game.result
 
@@ -158,18 +157,18 @@ class MCTS():
 
         bestChild = random.choice(maxNodes)
 
-        return bestChild.move        
+        return bestChild.state.getX()        
 
     # Move
-    def move(self, move):
-        if move in self.frontier.stack:
-            self.newGame.move(move)
-            for i in self.frontier.stack:
-                if move == self.frontier.stack[i]:
-                    self.root = self.frontier.stack[i]
+    # def move(self, move):
+    #     if move in self.frontier.stack:
+    #         self.newGame.move(move)
+    #         for i in self.frontier.stack:
+    #             if move == self.frontier.stack[i]:
+    #                 self.root = self.frontier.stack[i]
 
-        self.newGame.move(move)
-        self.root = Node(None, None)
+    #     self.newGame.move(move)
+    #     self.root = Node(None, None)
 
 
     # Statistics
@@ -179,7 +178,7 @@ class MCTS():
 
     def play(self, game):
         self.newGame = deepcopy(game)
-        frontier = self.__setFrontier(self.newGame.getMatrix())
-        
-        pass
+        self.__setFrontier(self.newGame.getMatrix(), Node(None, None))
+        self.search(5)
 
+        return self.bestMove()
