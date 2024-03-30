@@ -1,4 +1,4 @@
-from Queue import Queue
+from queue import Queue
 from node import Node
 from vector import Vector
 import math
@@ -54,7 +54,7 @@ class MCTS():
                     maxNodes.append(childrenValues[i])
 
             node = random.choice(maxNodes)
-            #self.newGame.makeMove(node.move???) ????
+            self.newGame.makeMove(node.move)
 
             if node.N == 0:
                 return node, newGame
@@ -72,7 +72,7 @@ class MCTS():
                     maxNodes.append(childrenValues[i])
 
             node = random.choice(maxNodes)
-            #self.newGame.makeMove(node.move???) ????
+            self.newGame.makeMove(node.move)
 
         return node, newGame
 
@@ -142,10 +142,34 @@ class MCTS():
     def bestMove(self):
         if self.newGame.gameOver():
             return -1
-    
-        #maxValue =
 
-        pass
+        maxValue = self.frontier.stack[0]
+
+        for i in range (len(self.frontier.stack)):
+            if self.frontier.stack[i].N > maxValue.N:
+                maxValue = self.frontier.stack[i]
+
+        maxValue = maxValue.N
+        maxNodes = []
+
+        for i in range (len(self.frontier.stack)):
+            if self.frontier.stack[i].N == maxValue.N:
+                maxNodes.append(self.frontier.stack[i])
+
+        bestChild = random.choice(maxNodes)
+
+        return bestChild.move        
+
+    # Move
+    def move(self, move):
+        if move in self.frontier.stack:
+            self.newGame.move(move)
+            for i in self.frontier.stack:
+                if move == self.frontier.stack[i]:
+                    self.root = self.frontier.stack[i]
+
+        self.newGame.move(move)
+        self.root = Node(None, None)
 
 
     # Statistics
@@ -158,3 +182,4 @@ class MCTS():
         frontier = self.__setFrontier(self.newGame.getMatrix())
         
         pass
+
