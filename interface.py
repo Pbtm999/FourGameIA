@@ -1,6 +1,6 @@
-from astar import Astar
-from miniMax import MinMax
-from mcts import MCTS
+from searchAlgos.astar import Astar
+from searchAlgos.miniMax import MinMax
+from searchAlgos.mcts import MCTS
 
 class FourGame():
     # Parameters | self: Class FourGame instance | columns: Integer number of columns for the game | lines: Integer number of lines for the game

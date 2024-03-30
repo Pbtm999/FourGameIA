@@ -1,6 +1,6 @@
 from queue import Queue
-from node import Node
-from vector import Vector
+from dataStructs.node import Node
+from dataStructs.vector import Vector
 import math
 import time
 import random
