@@ -10,7 +10,8 @@ class MCTS():
         self.root = Node(None, None, None)
         self.rootState = deepcopy(game)
         self.symbol = iaSymbol
-        self.num_rollouts = 0
+        self.numRollouts = 0
+        self.runTime = 0
 
     def __rotateSymbol(self):
         if self.symbol == 'X':
@@ -29,16 +30,6 @@ class MCTS():
                     break
         return frontier
 
-    def __expand(self, parent, state):
-
-        if state.gameOver():
-            return False
-        
-        children = [Node(move, None, parent) for move in self.__getFrontier(state)]
-        parent.setChildren(children)
-
-        return True
-
     def __selection(self):
         node = self.root
         state = deepcopy(self.rootState)
@@ -53,7 +44,7 @@ class MCTS():
                 if child.N == 0:
                     childValue = float('inf')
                 else:
-                    childValue = child.Q / child.N + 2 * math.sqrt(math.log(child.parent.N) / child.N)
+                    childValue = child.Q / child.N + math.sqrt(2) * math.sqrt(math.log(child.parent.N) / child.N)
 
                 if (childValue > maxValue):
                     maxChildren = []
@@ -73,19 +64,22 @@ class MCTS():
             state.makeMove(node.move.getX(), self.__rotateSymbol())
 
         return node, state
+    
+    def __expand(self, node, state):
+
+        if state.gameOver():
+            return False
+        
+        children = [Node(move, None, node) for move in self.__getFrontier(state)]
+        node.setChildren(children)
+
+        return True
 
     def rollOut(self, state):
-        start_time = time.process_time()
-
-        num_rollouts = 0
         while not state.gameOver():
             legalMoves = state.getLegalMoves()
             choice = random.choice(legalMoves)
             state.makeMove(choice+1, self.__rotateSymbol())
-            num_rollouts += 1
-
-        self.run_time = time.process_time() - start_time
-        self.num_rollouts += num_rollouts
         
         if state.gameDraw():
             return ''
@@ -94,7 +88,7 @@ class MCTS():
     
     def backPropagation(self, node, turn, outcome):
 
-        reward = 0 if outcome == turn else 1
+        reward = 1 if outcome == turn else 0
 
         while node is not None:
             node.N += 1
@@ -108,10 +102,16 @@ class MCTS():
     def search(self, timeLimit):
         startTime = time.process_time()
 
-        for _ in range(64731):
+        numRollouts = 0
+
+        while time.process_time() - startTime < timeLimit:
             node, state = self.__selection()
             outcome = self.rollOut(state)
             self.backPropagation(node, self.symbol, outcome)
+            numRollouts += 1
+
+        self.runTime = time.process_time() - startTime
+        self.numRollouts = numRollouts
 
     def bestMove(self):
         if self.rootState.gameOver(): # Na nossa implementação não deve entrar nisto mas no caso de avaliação de vitória ser feita pelo algoritmo é necessário
@@ -134,10 +134,23 @@ class MCTS():
         
         bestChild = random.choice(maxNodes)
 
+        self.root = bestChild
+
         return bestChild
 
     def play(self, _):
         self.search(8)
 
-        print(self.num_rollouts, self.run_time)
+
+        print(self.root.children)
+        print("Root N value: ", self.root.N, " | Root Q value: ", self.root.Q)
+        print("Total of ", self.numRollouts, " Rollouts in ", self.runTime, " seconds.")
+        print("Root 1st child N value: ", self.root.children[0].N, " | Root 1st child Q value: ", self.root.children[0].Q)
+        print("Root 2nd child N value: ", self.root.children[1].N, " | Root 2nd child Q value: ", self.root.children[1].Q)
+        print("Root 3rd child N value: ", self.root.children[2].N, " | Root 3rd child Q value: ", self.root.children[2].Q)
+        print("Root 4th child N value: ", self.root.children[3].N, " | Root 4th child Q value: ", self.root.children[3].Q)
+        print("Root 5th child N value: ", self.root.children[4].N, " | Root 5th child Q value: ", self.root.children[4].Q)
+        print("Root 6th child N value: ", self.root.children[5].N, " | Root 6th child Q value: ", self.root.children[5].Q)
+        print("Root 7th child N value: ", self.root.children[6].N, " | Root 7th child Q value: ", self.root.children[6].Q)
+
         return self.bestMove().move.getX()
