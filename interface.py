@@ -1,4 +1,3 @@
-from graph import Graph
 from astar import Astar
 from miniMax import MinMax
 from mcts import MCTS
@@ -185,7 +184,5 @@ def main():
                     end = True
                     print('The symbol ' + winner + ' just won!')
         
-
-
 if __name__ == '__main__':
     main()
