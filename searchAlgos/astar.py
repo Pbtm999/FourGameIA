@@ -28,22 +28,24 @@ class Astar():
         
         self.monotony = bestMoveNode.pathCost
 
-        return bestMoveNode.state.getX()
+        return bestMoveNode.move.getX()
         
-    def __setFrontier(self, game):
+    def __setFrontier(self, actualState):
         for column in range(0,7):
             for line in range(5,-1,-1):
-                if game[line][column] == '-':
-                    node = Node(Vector(column, line), None)
-                    newGameState = list(map(list, game))
-                    newGameState[line][column] = self.symbol
+                if actualState[line][column] == '-':
 
-                    node.setPathCost(max(self.monotony, heuristicCalculate(newGameState, self.symbol)))
+                    newState = list(map(list, actualState))
+                    newState[line][column] = self.symbol
+
+                    node = Node(Vector(column, line), newState, None)
+
+                    node.setPathCost(max(self.monotony, heuristicCalculate(node.state, self.symbol)))
 
                     self.frontier.add(node)
                     break
 
     def play(self, game):
-        self.__setFrontier(game)
+        self.__setFrontier(game.state)
         
         return self.__bestMove()

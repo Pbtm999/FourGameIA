@@ -31,7 +31,7 @@ class MinMax():
             best_move = None
             for child in valid_plays:
                 newGame = list(map(list, actualGame))
-                newGame[child.state.getY()][child.state.getX()] = self.MaxSymbol
+                newGame[child.move.getY()][child.move.getX()] = self.MaxSymbol
                 eval, bestChild = self.minimax(self.set_frontier(newGame), depth - 1, False, newGame)
 
                 if bestChild == None:
@@ -50,7 +50,7 @@ class MinMax():
             best_move = None
             for child in valid_plays:
                 newGame = list(map(list, actualGame))
-                newGame[child.state.getY()][child.state.getX()] = self.MinSymbol
+                newGame[child.move.getY()][child.move.getX()] = self.MinSymbol
                 eval, bestChild = self.minimax(self.set_frontier(newGame), depth - 1, True, newGame)
                 
                 if bestChild == None:
@@ -67,20 +67,20 @@ class MinMax():
         for column in range(0,7):
             for line in range(5, -1, -1):
                 if game[line][column] == '-':
-                    node = Node(Vector(column, line), None)
+                    node = Node(Vector(column, line), None, None)
                     node.setPathCost(heuristicCalculate(game, self.MaxSymbol))
                     frontier.add(node)
                     break
         return frontier
 
     def play(self, game):
-        newGame = list(map(list, game))
+        newGame = list(map(list, game.state))
         frontier = self.set_frontier(newGame)
         # Perform minimax algorithm here to determine the best move
     
         _, melhor = self.minimax(frontier, 3, True, newGame)
 
-        return melhor.state.getX()
+        return melhor.move.getX()
 
 # Example usage:
 # Initialize MinMax instance

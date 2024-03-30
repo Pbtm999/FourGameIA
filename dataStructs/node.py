@@ -1,7 +1,8 @@
 class Node():
 
-    def __init__(self, state, parent):
+    def __init__(self, move, state, parent):
         self.state = state
+        self.move = move
         self.parent = parent
         self.N = 0
         self.Q = 0

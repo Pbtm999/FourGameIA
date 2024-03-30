@@ -1,4 +1,4 @@
-from queue import Queue
+from dataStructs.myQueue import Queue
 from dataStructs.node import Node
 from dataStructs.vector import Vector
 import math
@@ -14,16 +14,21 @@ class MCTS():
         self.toPlay = 'X'
         self.runTime = 0
         self.newGame = None
-        self.root = Node(None, None)
+        self.root = Node(None, None, None)
 
+    def changeSymbol(self):
+        if self.symbol == 'X':
+            self.symbol = 'O'
+        else:
+            self.symbol = 'X'
 
     # Criar a fronteira e calcula o valor de cada nó
-    def __setFrontier(self, matrix, parent):
+    def __setFrontier(self, state, parent):
         frontier = Queue()
         for column in range(0,7):
             for line in range(5,-1,-1):
-                if matrix[line][column] == '-':
-                    node = Node(Vector(column, line), parent)
+                if state[line][column] == '-':
+                    node = Node(Vector(column, line), None, parent)
                     if node.N == 0:
                         node.setPathCost(float('inf'))
                     else:
@@ -37,41 +42,51 @@ class MCTS():
     def __selectBestNode(self):
         node = self.root
         newGame = deepcopy(self.newGame)
-        childrenValues = []
+        MaxChildrens = []
         maxNodes = []
 
         while self.frontier.size > 0:
             children = self.frontier.stack
 
+            maxValue = float('-inf')
+
             for child in children:
-                childrenValues.append(child.getPathCost())
+                childCost = child.getPathCost()
 
-            maxValue = max(childrenValues)
-            
-            for i in range(len(childrenValues)):
-                if maxValue == childrenValues[i]:
-                    maxNodes.append(childrenValues[i])
+                if childCost == maxValue:
+                    MaxChildrens.append(child)
+                elif childCost > maxValue:
+                    MaxChildrens = []
+                    maxValue = childCost
+                    MaxChildrens.append(child)
 
-            node = random.choice(maxNodes)
-            self.newGame.makeMove(node, self.symbol)
+
+            node = random.choice(MaxChildrens)
+            self.newGame.makeMove(node.move.getX(), self.symbol)
 
             if node.N == 0:
                 return node, newGame
+        
+            self.changeSymbol()
+            self.__setFrontier(self.newGame.state, node)
             
         if self.__expansion(node, newGame):
             children = self.frontier.stack
 
-            for child in children:
-                childrenValues.append(child.getPathCost())
+            maxValue = float('-inf')
 
-            maxValue = max(childrenValues)
-            
-            for i in range(len(childrenValues)):
-                if maxValue == childrenValues[i]:
-                    maxNodes.append(childrenValues[i])
+            for child in children:
+                childCost = child.getPathCost()
+
+                if childCost == maxValue:
+                    MaxChildrens.append(child)
+                elif childCost > maxValue:
+                    MaxChildrens = []
+                    maxValue = childCost
+                    MaxChildrens.append(child)
 
             node = random.choice(maxNodes)
-            self.newGame.makeMove(node.state.getX(), self.symbol)
+            self.newGame.makeMove(node.move.getX(), self.symbol)
 
         return node, newGame
 
@@ -81,8 +96,8 @@ class MCTS():
         if game.gameOver():
             return False
         
-        matrix = game.getMatrix()
-        self.__setFrontier(matrix, parent)
+        state = game.state
+        self.__setFrontier(state, parent)
 
         return True
         
@@ -126,10 +141,10 @@ class MCTS():
         numSimulations = 0
 
         while time.process_time() - start < timeLimit:
-            node, matrix = self.__selectBestNode()
-            winner = self.__simulation(matrix)
+            node, state = self.__selectBestNode()
+            winner = self.__simulation(state)
             self.__backpropagation(node, self.newGame.toPlay, winner)
-            numSimulations += 1        
+            numSimulations += 1
     
         # Apenas para estatísticas
         self.numSimulations = numSimulations
@@ -157,7 +172,7 @@ class MCTS():
 
         bestChild = random.choice(maxNodes)
 
-        return bestChild.state.getX()        
+        return bestChild.move.getX()        
 
     # Move
     # def move(self, move):
@@ -178,7 +193,7 @@ class MCTS():
 
     def play(self, game):
         self.newGame = deepcopy(game)
-        self.__setFrontier(self.newGame.getMatrix(), Node(None, None))
+        self.__setFrontier(self.newGame.state, self.root)
         self.search(5)
 
         return self.bestMove()
