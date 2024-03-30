@@ -28,7 +28,7 @@ def main():
         case 1:
             algo = Astar(iaSymbol)
         case 2:
-            algo = MCTS(game)
+            algo = MCTS(iaSymbol, game)
         case 3:
             algo = MinMax(iaSymbol, move)
 

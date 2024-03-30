@@ -94,10 +94,13 @@ class FourGame():
     def gameOver(self):
         return self.result is not None or self.plays == self.columns * self.lines
     
+    def gameDraw(self):
+        return self.plays == self.columns * self.lines
+    
     def getLegalMoves(self):
         legalMoves = []
         for i in range(7):
-            if self.state[5][i] == '-':
+            if self.state[0][i] == '-':
                 legalMoves.append(i)
 
         return legalMoves

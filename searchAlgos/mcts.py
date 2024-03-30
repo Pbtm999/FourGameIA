@@ -1,199 +1,143 @@
-from dataStructs.myQueue import Queue
 from dataStructs.node import Node
+from copy import deepcopy
 from dataStructs.vector import Vector
+import random
 import math
 import time
-import random
-from copy import deepcopy
 
 class MCTS():
-    def __init__(self, game) -> None:
-        self.frontier = None
-        self.symbol = 'X'
-        self.numSimulations = 0
-        self.toPlay = 'X'
-        self.runTime = 0
-        self.newGame = None
+    def __init__(self, iaSymbol, game):
         self.root = Node(None, None, None)
+        self.rootState = deepcopy(game)
+        self.symbol = iaSymbol
+        self.num_rollouts = 0
 
-    def changeSymbol(self):
+    def __rotateSymbol(self):
         if self.symbol == 'X':
             self.symbol = 'O'
-        else:
-            self.symbol = 'X'
-
-    # Criar a fronteira e calcula o valor de cada nó
-    def __setFrontier(self, state, parent):
-        frontier = Queue()
-        for column in range(0,7):
-            for line in range(5,-1,-1):
-                if state[line][column] == '-':
-                    node = Node(Vector(column, line), None, parent)
-                    if node.N == 0:
-                        node.setPathCost(float('inf'))
-                    else:
-                        node.setPathCost(node.Q / node.N + math.sqrt(2) * math.sqrt(math.log(node.parent.N) / node.N))
-                    frontier.add(node)
-                    break
-        self.frontier = frontier
-
-
-    # Selection
-    def __selectBestNode(self):
-        node = self.root
-        newGame = deepcopy(self.newGame)
-        MaxChildrens = []
-        maxNodes = []
-
-        while self.frontier.size > 0:
-            children = self.frontier.stack
-
-            maxValue = float('-inf')
-
-            for child in children:
-                childCost = child.getPathCost()
-
-                if childCost == maxValue:
-                    MaxChildrens.append(child)
-                elif childCost > maxValue:
-                    MaxChildrens = []
-                    maxValue = childCost
-                    MaxChildrens.append(child)
-
-
-            node = random.choice(MaxChildrens)
-            self.newGame.makeMove(node.move.getX(), self.symbol)
-
-            if node.N == 0:
-                return node, newGame
-        
-            self.changeSymbol()
-            self.__setFrontier(self.newGame.state, node)
-            
-        if self.__expansion(node, newGame):
-            children = self.frontier.stack
-
-            maxValue = float('-inf')
-
-            for child in children:
-                childCost = child.getPathCost()
-
-                if childCost == maxValue:
-                    MaxChildrens.append(child)
-                elif childCost > maxValue:
-                    MaxChildrens = []
-                    maxValue = childCost
-                    MaxChildrens.append(child)
-
-            node = random.choice(maxNodes)
-            self.newGame.makeMove(node.move.getX(), self.symbol)
-
-        return node, newGame
-
-
-    # Expansion
-    def __expansion(self, parent, game):
-        if game.gameOver():
-            return False
-        
-        state = game.state
-        self.__setFrontier(state, parent)
-
-        return True
-        
-
-    # Simulation
-    def __simulation(self, game):
-        while not game.gameOver():
-            game.makeMove(random.choice(game.getLegalMoves()), self.symbol)
-
-        result = game.result
-
-        if(result == 'O'):          # Ganha o player 1
-            return 'O'
-        elif(result == 'X'):        # Ganha o player 2
             return 'X'
         else:
-            return "Draw"                # Empate
+            self.symbol = 'X'
+            return 'O'
 
+    def __getFrontier(self, state):
+        frontier = []
+        for column in range(0,7):
+            for line in range(5, -1, -1):
+                if state.state[line][column] == '-':
+                    frontier.append(Vector(column, line))
+                    break
+        return frontier
 
-    # Backpropagation
-    def __backpropagation(self, node, turn, winner):
-        if winner == turn:
-            reward = 1
-        else:
-            reward = 0
+    def __expand(self, parent, state):
+
+        if state.gameOver():
+            return False
         
+        children = [Node(move, None, parent) for move in self.__getFrontier(state)]
+        parent.setChildren(children)
+
+        return True
+
+    def __selection(self):
+        node = self.root
+        state = deepcopy(self.rootState)
+
+        while len(node.children) != 0:
+            children = node.children
+
+            maxValue = float('-inf')
+            maxChildren = []
+
+            for child in children:
+                if child.N == 0:
+                    childValue = float('inf')
+                else:
+                    childValue = child.Q / child.N + 2 * math.sqrt(math.log(child.parent.N) / child.N)
+
+                if (childValue > maxValue):
+                    maxChildren = []
+                    maxChildren.append(child)
+                    maxValue = childValue
+                elif (childValue == maxValue):
+                    maxChildren.append(child)
+
+            node = random.choice(maxChildren)
+            state.makeMove(node.move.getX(), self.__rotateSymbol())
+
+            if node.N == 0:
+                return node, state
+
+        if self.__expand(node, state):
+            node = random.choice(node.children)
+            state.makeMove(node.move.getX(), self.__rotateSymbol())
+
+        return node, state
+
+    def rollOut(self, state):
+        start_time = time.process_time()
+
+        num_rollouts = 0
+        while not state.gameOver():
+            legalMoves = state.getLegalMoves()
+            choice = random.choice(legalMoves)
+            state.makeMove(choice+1, self.__rotateSymbol())
+            num_rollouts += 1
+
+        self.run_time = time.process_time() - start_time
+        self.num_rollouts += num_rollouts
+        
+        if state.gameDraw():
+            return ''
+        
+        return state.result
+    
+    def backPropagation(self, node, turn, outcome):
+
+        reward = 0 if outcome == turn else 1
+
         while node is not None:
             node.N += 1
             node.Q += reward
             node = node.parent
-
-            if winner != 'X' and winner != 'O':
+            if outcome == '': # '' representa o empate
                 reward = 0
             else:
-                reward = 1 - reward     # Alterna entre 0 e 1, porque cada alternância representa um turno diferente
+                reward = 1 - reward
 
-
-    # Combining the 4 phases
     def search(self, timeLimit):
-        start = time.process_time()
-        numSimulations = 0
+        startTime = time.process_time()
 
-        while time.process_time() - start < timeLimit:
-            node, state = self.__selectBestNode()
-            winner = self.__simulation(state)
-            self.__backpropagation(node, self.newGame.toPlay, winner)
-            numSimulations += 1
-    
-        # Apenas para estatísticas
-        self.numSimulations = numSimulations
-        runTime = time.process_time() - start
-        self.runTime = runTime
-        
+        for _ in range(64731):
+            node, state = self.__selection()
+            outcome = self.rollOut(state)
+            self.backPropagation(node, self.symbol, outcome)
 
-    # Best Move
     def bestMove(self):
-        if self.newGame.gameOver():
+        if self.rootState.gameOver(): # Na nossa implementação não deve entrar nisto mas no caso de avaliação de vitória ser feita pelo algoritmo é necessário
             return -1
 
-        maxValue = self.frontier.stack[0]
-
-        for i in range (len(self.frontier.stack)):
-            if self.frontier.stack[i].N > maxValue.N:
-                maxValue = self.frontier.stack[i]
-
-        maxValue = maxValue.N
+        maxValue = float('-inf')
         maxNodes = []
+        for child in self.root.children:
+            if child.Q == 0:
+                childValue = 0
+            else:
+                childValue = child.N 
 
-        for i in range (len(self.frontier.stack)):
-            if self.frontier.stack[i].N == maxValue.N:
-                maxNodes.append(self.frontier.stack[i])
-
+            if (childValue > maxValue):
+                maxNodes = []
+                maxNodes.append(child)
+                maxValue = childValue
+            elif (childValue == maxValue):
+                maxNodes.append(child)
+        
         bestChild = random.choice(maxNodes)
 
-        return bestChild.move.getX()        
+        return bestChild
 
-    # Move
-    # def move(self, move):
-    #     if move in self.frontier.stack:
-    #         self.newGame.move(move)
-    #         for i in self.frontier.stack:
-    #             if move == self.frontier.stack[i]:
-    #                 self.root = self.frontier.stack[i]
+    def play(self, _):
+        self.search(8)
 
-    #     self.newGame.move(move)
-    #     self.root = Node(None, None)
-
-
-    # Statistics
-    def statistics(self):
-        return self.numSimulations, self.runTime
-        
-
-    def play(self, game):
-        self.newGame = deepcopy(game)
-        self.__setFrontier(self.newGame.state, self.root)
-        self.search(5)
-
-        return self.bestMove()
+        print(self.num_rollouts, self.run_time)
+        return self.bestMove().move.getX()

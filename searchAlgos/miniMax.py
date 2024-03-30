@@ -32,7 +32,7 @@ class MinMax():
             for child in valid_plays:
                 newGame = list(map(list, actualGame))
                 newGame[child.move.getY()][child.move.getX()] = self.MaxSymbol
-                eval, bestChild = self.minimax(self.set_frontier(newGame), depth - 1, False, newGame)
+                eval, bestChild = self.minimax(self.__setFrontier(newGame), depth - 1, False, newGame)
 
                 if bestChild == None:
                     eval = child.getPathCost()
@@ -51,7 +51,7 @@ class MinMax():
             for child in valid_plays:
                 newGame = list(map(list, actualGame))
                 newGame[child.move.getY()][child.move.getX()] = self.MinSymbol
-                eval, bestChild = self.minimax(self.set_frontier(newGame), depth - 1, True, newGame)
+                eval, bestChild = self.minimax(self.__setFrontier(newGame), depth - 1, True, newGame)
                 
                 if bestChild == None:
                     eval = child.getPathCost()
@@ -62,7 +62,7 @@ class MinMax():
 
             return min_eval, best_move
 
-    def set_frontier(self, game):
+    def __setFrontier(self, game):
         frontier = Queue()
         for column in range(0,7):
             for line in range(5, -1, -1):
@@ -75,7 +75,7 @@ class MinMax():
 
     def play(self, game):
         newGame = list(map(list, game.state))
-        frontier = self.set_frontier(newGame)
+        frontier = self.__setFrontier(newGame)
         # Perform minimax algorithm here to determine the best move
     
         _, melhor = self.minimax(frontier, 3, True, newGame)
