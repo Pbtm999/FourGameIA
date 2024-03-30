@@ -1,7 +1,7 @@
-from queue import Queue
-from vector import Vector
-from node import Node
-from heuristic import heuristicCalculate
+from dataStructs.myQueue import Queue
+from dataStructs.vector import Vector
+from dataStructs.node import Node
+from searchAlgos.heuristic import heuristicCalculate
 
 class MinMax():
 

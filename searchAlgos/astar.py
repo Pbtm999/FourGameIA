@@ -1,7 +1,7 @@
-from queue import Queue
-from node import Node
-from vector import Vector
-from heuristic import heuristicCalculate
+from dataStructs.myQueue import Queue
+from dataStructs.node import Node
+from dataStructs.vector import Vector
+from searchAlgos.heuristic import heuristicCalculate
 
 def max(a, b):
     if a > b:
