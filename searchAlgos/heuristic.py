@@ -4,7 +4,7 @@
 #       segment | type: list de caracteres de tamanho 4 | representa um segmento de 4 slots com os símbolos de cada slot
 #       IaSymbol | type: string | representa o símbolo que IA está a usar para jogar
 #
-# returns: type: int | Retorna a valoração correta para a combinação de número de símbolos X e O encontrados no segmento segundo as regras dadas para calculo da euristica
+# returns: type: int | Retorna a valoração correta para a combinação de número de símbolos X e O encontrados no segmento segundo as regras dadas para calculo da heurística
 
 def heuristicVal(segment, IaSymbol):
     
@@ -40,13 +40,13 @@ def heuristicVal(segment, IaSymbol):
         return 0  #Combinação de O e X | nenhum padrão encontrado
 
 
-# Cálculo da euristica através da geração dos segmentos e soma dos seus valores 
+# Cálculo da heurística através da geração dos segmentos e soma dos seus valores 
 # params: 
 #
 #       boardState | matrix (list of lists): matrix de caracteres | representa o estado atual do tabuleiro do jogo
 #       IaSymbol | type: string | representa o símbolo que AI está a usar para jogar
 #
-# returns: type: int | Retorna a euristica do boardState dado
+# returns: type: int | Retorna a heurística do boardState dado
 
 def heuristicCalculate(boardState, IaSymbol):
 

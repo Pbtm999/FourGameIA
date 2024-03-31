@@ -10,9 +10,9 @@ from searchAlgos.heuristic import heuristicCalculate
 #
 # metodos:
 #
-#       __gameAlreadyWon | privado | Retorna a coluna do move do melhor nó ou seja o nó com euristica mais alta no caso
+#       __gameAlreadyWon | privado | Retorna a coluna do move do melhor nó ou seja o nó com heurística mais alta no caso
 #       __minimax | privado | Função recursiva para determinar o máximo e minimo dos nós alternadamente (implementação do minMax em si)
-#       __getChildren | privado | Define os nós filhos do nó a ser analisado e dá calcula a euristica deles e o estado que representam
+#       __getChildren | privado | Define os nós filhos do nó a ser analisado e dá calcula a heurística deles e o estado que representam
 #       play | publico | Retorna a jogada a fazer pela IA
 #
 class MinMax():
@@ -34,10 +34,10 @@ class MinMax():
     #       self | type: int | Referência ao objeto MinMax usado
     #       gameState | type: matrix (list of lists): matrix de caracteres | Representa o estado do jogo neste ponto
     #
-    # return: type: int | Retorna a heuristica em caso de vitória, empate ou derrota ou None
+    # return: type: int | Retorna a hheurística em caso de vitória, empate ou derrota ou None
 
     def __gameAlreadyWon(self, gameState):
-        heuristic = heuristicCalculate(gameState, self.MaxSymbol) # Calcula a euristica do estado neste ponto
+        heuristic = heuristicCalculate(gameState, self.MaxSymbol) # Calcula a heurística do estado neste ponto
         if heuristic >= 512 or heuristic <= -512 or heuristic == 0: # Verifica se é vitória, empate ou derrota
             return heuristic
         return None
@@ -62,9 +62,9 @@ class MinMax():
  
         # Primeiro expande até à profundidade pretendida e posteriormente ao voltar para trás escolhe o nó maximo ou minimo dependendo do "turno" (forma alternada começando sempre no Max nesta implementação)
         if maximizingPlayer:
-            heuristicVal = self.__gameAlreadyWon(actualGame) # Verifica se houve ou não o fim do jogo e retorna uma euristica caso aconteça
+            heuristicVal = self.__gameAlreadyWon(actualGame) # Verifica se houve ou não o fim do jogo e retorna uma heurística caso aconteça
             if heuristicVal and (heuristicVal >= 512 or heuristicVal == 0):
-                return heuristicVal, None # Retornando tal euristica como valor máximo em caso de vitória ou empate
+                return heuristicVal, None # Retornando tal heurística como valor máximo em caso de vitória ou empate
  
             max_eval = float('-inf') # Inicializa o valor máximo como -inf para a primeira comparação
             best_move = None # Inicializa o bestMove
@@ -72,7 +72,7 @@ class MinMax():
 
                 eval, bestChild = self.__minimax(self.__getChildren(child.state, self.MinSymbol), depth - 1, False, child.state) # Para cada nó filho aplica o minmax mas agora para a busca de minimos
 
-                # Caso o nó maximo dos nós seja vitória ou empate o eval recebe o valor da euristica do nó filho a ser analizado
+                # Caso o nó maximo dos nós seja vitória ou empate o eval recebe o valor da heurística do nó filho a ser analizado
                 if bestChild == None:
                     eval = child.getPathCost()
 
@@ -84,9 +84,9 @@ class MinMax():
             # Retorna o nó maximo e o seu valor
             return max_eval, best_move
         else:
-            heuristicVal = self.__gameAlreadyWon(actualGame) # Verifica se houve ou não o fim do jogo e retorna uma euristica caso aconteça
+            heuristicVal = self.__gameAlreadyWon(actualGame) # Verifica se houve ou não o fim do jogo e retorna uma heurística caso aconteça
             if heuristicVal and (heuristicVal <= -512 or heuristicVal == 0): 
-                return heuristicVal, None  # Retornando tal euristica como valor mínimo em caso de vitória ou empate
+                return heuristicVal, None  # Retornando tal heurística como valor mínimo em caso de vitória ou empate
 
             min_eval = float('inf') # Inicializa o valor mínimo como inf para a primeira comparação
             best_move = None # Inicializa o bestMove
@@ -94,7 +94,7 @@ class MinMax():
 
                 eval, bestChild = self.__minimax(self.__getChildren(child.state, self.MaxSymbol), depth - 1, True, child.state) # Para cada nó filho aplica o minmax mas agora para a busca de máximos
                 
-                # Caso o nó mínimo dos nós seja vitória ou empate o eval recebe o valor da euristica do nó filho a ser analizado
+                # Caso o nó mínimo dos nós seja vitória ou empate o eval recebe o valor da heurística do nó filho a ser analizado
                 if bestChild == None:
                     eval = child.getPathCost()
                 
@@ -125,7 +125,7 @@ class MinMax():
                     newGame[line][column] = symbolToPlay # Atualiza esse estado com o simbolo no move a jogar
                     node = Node(Vector(column, line), newGame, None) # Cria um nó para esse move e estado
                     
-                    node.setPathCost(heuristicCalculate(game, self.MaxSymbol)) # Calcula a euristica para esse estado
+                    node.setPathCost(heuristicCalculate(game, self.MaxSymbol)) # Calcula a heurística para esse estado
                     children.append(node) # adiciona esse nó á lista dos filhos
                     break
         return children
