@@ -19,16 +19,16 @@ def showResults(game, result, winner):
     match result:
         case -1:  # Caso quando a coluna está cheia
             print("Invalid Move! Please choose another column.")
-            return False
+            return False, True
         case 0:  # Caso para quando o movimento é valido mas não resulta no fim do jogo
             print("Nice Move!")
-            return False
+            return False, False
         case 1:  # Caso de empate
             print("It's a Draw!!")
-            return True
+            return True, False
         case 2:  # Caso de vitória
             print('The symbol ' + winner + ' just won!')
-            return True
+            return True, False
 
 def main():
     game = FourGame(7, 6)  # Cria uma nova instância da classe FourGame
@@ -75,12 +75,12 @@ def main():
 
         result, winner = game.makeMove(col, move)  # Faz um movimento na coluna col
 
-        end = showResults(game, result, winner) # Analisa e retorna a resposta junto com o tabuleiro atual
-        
+        end, invalid = showResults(game, result, winner) # Analisa e retorna a resposta junto com o tabuleiro atual
+
         if not end and not invalid:
             result, winner = game.makeMove(algo.play(game)+1, iaSymbol)  # Faz um movimento na coluna col
 
-            end = showResults(game, result, winner) # Analisa e retorna a resposta junto com o tabuleiro atual
+            end, invalid = showResults(game, result, winner) # Analisa e retorna a resposta junto com o tabuleiro atual
         
 if __name__ == '__main__':
     main()
