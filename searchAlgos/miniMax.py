@@ -30,9 +30,8 @@ class MinMax():
             max_eval = float('-inf')
             best_move = None
             for child in valid_plays:
-                newGame = list(map(list, actualGame))
-                newGame[child.move.getY()][child.move.getX()] = self.MaxSymbol
-                eval, bestChild = self.minimax(self.__setFrontier(newGame), depth - 1, False, newGame)
+
+                eval, bestChild = self.minimax(self.__setFrontier(child.state, self.MinSymbol), depth - 1, False, child.state)
 
                 if bestChild == None:
                     eval = child.getPathCost()
@@ -49,9 +48,8 @@ class MinMax():
             min_eval = float('inf')
             best_move = None
             for child in valid_plays:
-                newGame = list(map(list, actualGame))
-                newGame[child.move.getY()][child.move.getX()] = self.MinSymbol
-                eval, bestChild = self.minimax(self.__setFrontier(newGame), depth - 1, True, newGame)
+
+                eval, bestChild = self.minimax(self.__setFrontier(child.state, self.MaxSymbol), depth - 1, True, child.state)
                 
                 if bestChild == None:
                     eval = child.getPathCost()
@@ -62,12 +60,16 @@ class MinMax():
 
             return min_eval, best_move
 
-    def __setFrontier(self, game):
+    def __setFrontier(self, game, symbolToPlay):
         frontier = Queue()
         for column in range(0,7):
             for line in range(5, -1, -1):
                 if game[line][column] == '-':
-                    node = Node(Vector(column, line), None, None)
+                    
+                    newGame = list(map(list, game))
+                    newGame[line][column] = symbolToPlay
+                    node = Node(Vector(column, line), newGame, None)
+                    
                     node.setPathCost(heuristicCalculate(game, self.MaxSymbol))
                     frontier.add(node)
                     break
@@ -75,7 +77,7 @@ class MinMax():
 
     def play(self, game):
         newGame = list(map(list, game.state))
-        frontier = self.__setFrontier(newGame)
+        frontier = self.__setFrontier(newGame, self.MaxSymbol)
         # Perform minimax algorithm here to determine the best move
     
         _, melhor = self.minimax(frontier, 3, True, newGame)
