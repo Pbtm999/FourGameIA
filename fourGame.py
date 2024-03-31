@@ -39,7 +39,7 @@ class FourGame():
         columnI = column
         for _ in range(2):
 
-            while lineI <= 5 and lineI >= 0 and columnI <= 6 and column >= 0 and self.state[lineI][columnI] == symbol:
+            while lineI <= 5 and lineI >= 0 and columnI <= 6 and columnI >= 0 and self.state[lineI][columnI] == symbol:
                 count += 1
                 columnI += columnCount
                 lineI += lineCount
