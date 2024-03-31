@@ -1,68 +1,83 @@
-# Define rules for evaluating segments
+# Regras de valoração de combinações do segmento (segmentos de 4 slots)
+# params: 
+#
+#       segment | type: list de caracteres de tamanho 4 | representa um segmento de 4 slots com os símbolos de cada slot
+#       IaSymbol | type: string | representa o símbolo que IA está a usar para jogar
+#
+# returns: type: int | Retorna a valoração correta para a combinação de número de símbolos X e O encontrados no segmento segundo as regras dadas para calculo da euristica
+
 def heuristicVal(segment, IaSymbol):
     
+    #Define qual símbolo é usado pelo humano com base no dado para a IA
     if IaSymbol == 'X':
         HumanSymbol = 'O'
     else:
         HumanSymbol = 'X'
-    
+
+    #Conta o número
     IA_count = segment.count(IaSymbol)
     Human_count = segment.count(HumanSymbol)
+
     if Human_count == 4 and IA_count == 0:
-        return -512  # Value for three Os, no Xs
+        return -512  # Valor para 4 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 3 and IA_count == 0:
-        return -50  # Value for three Os, no Xs
+        return -50  # Valor para 3 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 2 and IA_count == 0:
-        return -10  # Value for two Os, no Xs
+        return -10  # Valor para 2 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 1 and IA_count == 0:
-        return -1  # Value for one O, no Xs
+        return -1  # Valor para 1 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 0 and IA_count == 0:
-        return 0  # No tokens or mixed Xs and Os
+        return 0  # Sem O ou X
     elif IA_count == 1 and Human_count == 0:
-        return 1  # Value for one X, no Os
+        return 1  # Valor para 1  Símbolos da IA e 0 Símbolos do humano
     elif IA_count == 2 and Human_count == 0:
-        return 10  # Value for two Xs, no Os
+        return 10  # Valor para 2  Símbolos da IA e 0 Símbolos do humano
     elif IA_count == 3 and Human_count == 0:
-        return 50  # Value for three Xs, no Os
+        return 50  # Valor para 3  Símbolos da IA e 0 Símbolos do humano
     elif IA_count == 4 and Human_count == 0:
-        return 512
+        return 512 # Valor para 4  Símbolos da IA e 0 Símbolos do humano
     else:
-        return 0  # No significant pattern found
+        return 0  #Combinação de O e X | nenhum padrão encontrado
 
 
-def heuristicCalculate(game, symbol):
+# Cálculo da euristica através da geração dos segmentos e soma dos seus valores 
+# params: 
+#
+#       boardState | matrix (list of lists): matrix de caracteres | representa o estado atual do tabuleiro do jogo
+#       IaSymbol | type: string | representa o símbolo que AI está a usar para jogar
+#
+# returns: type: int | Retorna a euristica do boardState dado
 
-    # Initialize sum of segment values
-    sum_values = 0
+def heuristicCalculate(boardState, IaSymbol):
 
-    # Define move bonus
-    move_bonus = 16 if symbol == 'X' else -16
+    heuristic = 0
 
-    # Horizontal segments
-    for row in game:
+    # Segmentos horizontais
+    for row in boardState:
         for i in range(len(row) - 3):
-            segment = row[i:i+4]
-            sum_values += heuristicVal(segment, symbol)
+            segment = row[i:i+4] # segmento a ser valorado
+            heuristic += heuristicVal(segment, IaSymbol)
 
-    # Vertical segments
-    for j in range(len(game[0])):
-        for i in range(len(game) - 3):
-            segment = [game[i+k][j] for k in range(4)]
-            sum_values += heuristicVal(segment, symbol)
+    # Segmentos verticais
+    for j in range(len(boardState[0])):
+        for i in range(len(boardState) - 3):
+            segment = [boardState[i+k][j] for k in range(4)] # segmento a ser valorado
+            heuristic += heuristicVal(segment, IaSymbol)
 
-    # Diagonal segments (top-left to bottom-right)
-    for i in range(len(game) - 3):
-        for j in range(len(game[0]) - 3):
-            segment = [game[i+k][j+k] for k in range(4)]
-            sum_values += heuristicVal(segment, symbol)
+    # Diagonal segments (superior-esquerdo to inferior-direito)
+    for i in range(len(boardState) - 3):
+        for j in range(len(boardState[0]) - 3):
+            segment = [boardState[i+k][j+k] for k in range(4)] # segmento a ser valorado
+            heuristic += heuristicVal(segment, IaSymbol)
 
-    # Diagonal segments (top-right to bottom-left)
-    for i in range(len(game) - 3):
-        for j in range(3, len(game[0])):
-            segment = [game[i+k][j-k] for k in range(4)]
-            sum_values += heuristicVal(segment, symbol)
+    # Segmentos das Diagonais (superior-direito até inferior-esquerdo)
+    for i in range(len(boardState) - 3):
+        for j in range(3, len(boardState[0])):
+            segment = [boardState[i+k][j-k] for k in range(4)] # segmento a ser valorado
+            heuristic += heuristicVal(segment, IaSymbol)
 
-    # Add move bonus
-    sum_values += move_bonus
+    # Bónus de movimento
+    move_bonus = 16 if IaSymbol == 'X' else -16 # Define o bónus dependendo de quem joga
+    heuristic += move_bonus # Adiciona o bónus
 
-    return sum_values
+    return heuristic
