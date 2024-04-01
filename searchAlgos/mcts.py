@@ -103,8 +103,9 @@ class MCTS():
         if self.rootState.gameOver(): # Na nossa implementação não deve entrar nisto mas no caso de avaliação de vitória ser feita pelo algoritmo é necessário
             return -1
 
-        max_value = max(self.root.children.values(), key=lambda n: n.N).N
-        max_nodes = [n for n in self.root.children.values() if n.N == max_value]
+        max_value = max(self.root.children.values(), key=lambda n: (n.N != 0 and n.Q/n.N) or 0)
+        max_value = (max_value.N != 0 and max_value.Q / max_value.N) or 0
+        max_nodes = [n for n in self.root.children.values() if ((n.N != 0 and n.Q/n.N) or 0) == max_value]
         bestChild = random.choice(max_nodes)
 
         return bestChild
@@ -115,15 +116,16 @@ class MCTS():
             self.root = self.root.children[move]
             return
 
-        self.rootState.makeMove(move+1, symbol)
+        if move:
+            self.rootState.makeMove(move+1, symbol)
         self.root = Node(None, None, None)
 
 
     def play(self, _, move):
 
-        self.moveRoot(move-1, self.playerSymbol)
+        self.moveRoot((move and move-1), self.playerSymbol)
 
-        self.search(8)
+        self.search(16)
         
         mcts_move = self.bestMove().move
 
