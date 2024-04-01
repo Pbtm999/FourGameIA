@@ -98,7 +98,7 @@ class Astar():
     #
     # return | type: int | Retorna a jogada a fazer pela IA
 
-    def play(self, game):
+    def play(self, game, _):
         self.__setFrontier(game.state) # Define a fronteira
         
         return self.__bestMove() # Verifica e retorna o melhor dos nós da fronteira

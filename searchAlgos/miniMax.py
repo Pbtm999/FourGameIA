@@ -138,7 +138,7 @@ class MinMax():
     #
     # return: type: int | Retorna a coluna da melhor jogada
 
-    def play(self, game):
+    def play(self, game, _):
         newGame = list(map(list, game.state)) # Copia o estado do jogo para outro endereço de memória
         frontier = self.__getChildren(newGame, self.MaxSymbol) # Busca os nós filhos do estado atual
     
