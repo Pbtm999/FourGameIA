@@ -120,15 +120,13 @@ class MCTS():
 
 
     def play(self, _, move):
-
-        self.moveRoot(move-1)
-        print(self.rootState, self.root.children)
-
         self.search(8)
         
+        print(self.rootState)
+
+        # self.moveRoot(move-1)
         mcts_move = self.bestMove().move
-        self.moveRoot(mcts_move)
-        print(self.rootState, self.root.children)
-        self.symbol = self.iaSymbol
+        # self.moveRoot(mcts_move)
+        # self.symbol = self.iaSymbol
         
         return mcts_move

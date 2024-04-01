@@ -34,10 +34,10 @@ class MinMax():
     #       self | type: int | Referência ao objeto MinMax usado
     #       gameState | type: matrix (list of lists): matrix de caracteres | Representa o estado do jogo neste ponto
     #
-    # return: type: int | Retorna a hheurística em caso de vitória, empate ou derrota ou None
+    # return: type: int | Retorna a heurística em caso de vitória, empate ou derrota ou None
 
     def __gameAlreadyWon(self, gameState):
-        heuristic = heuristicCalculate(gameState, self.MaxSymbol) # Calcula a heurística do estado neste ponto
+        heuristic = heuristicCalculate(gameState, self.MaxSymbol, None) # Calcula a heurística do estado neste ponto
         if heuristic >= 512 or heuristic <= -512 or heuristic == 0: # Verifica se é vitória, empate ou derrota
             return heuristic
         return None
@@ -125,7 +125,7 @@ class MinMax():
                     newGame[line][column] = symbolToPlay # Atualiza esse estado com o simbolo no move a jogar
                     node = Node(Vector(column, line), newGame, None) # Cria um nó para esse move e estado
                     
-                    node.setPathCost(heuristicCalculate(game, self.MinSymbol)) # Calcula a heurística para esse estado
+                    node.setPathCost(heuristicCalculate(game, self.MinSymbol, node.move)) # Calcula a heurística para esse estado
                     children.append(node) # adiciona esse nó á lista dos filhos
                     break
         return children

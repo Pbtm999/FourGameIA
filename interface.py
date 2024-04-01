@@ -78,7 +78,7 @@ def main():
         end, invalid = showResults(game, result, winner) # Analisa e retorna a resposta junto com o tabuleiro atual
 
         if not end and not invalid:
-            result, winner = game.makeMove(algo.play(game)+1, iaSymbol)  # Faz um movimento na coluna col
+            result, winner = game.makeMove(algo.play(game, col)+1, iaSymbol)  # Faz um movimento na coluna col
 
             end, invalid = showResults(game, result, winner) # Analisa e retorna a resposta junto com o tabuleiro atual
         

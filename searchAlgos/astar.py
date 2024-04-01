@@ -85,7 +85,7 @@ class Astar():
                     node = Node(Vector(column, line), newState, None) # Cria o nó com o move e o estado do jogo que representa
 
                     # Na linha abaixo deveria ser somado o custo do caminho ao heuristicCalculate mas dado que neste jogo o custo é irrelevante não foi feito.
-                    node.setPathCost(max(self.monotony, heuristicCalculate(node.state, self.symbol))) # Calcula e guarda a heurística do nó especifico (o custo do caminho é irrelevante neste jogo)
+                    node.setPathCost(max(self.monotony, heuristicCalculate(node.state, self.symbol, None))) # Calcula e guarda a heurística do nó especifico (o custo do caminho é irrelevante neste jogo)
 
                     self.frontier.add(node) # Adiciona o nó à fronteira
                     break

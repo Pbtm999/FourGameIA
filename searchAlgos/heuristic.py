@@ -48,9 +48,14 @@ def heuristicVal(segment, IaSymbol):
 #
 # returns: type: int | Retorna a heurística do boardState dado
 
-def heuristicCalculate(boardState, IaSymbol):
+def heuristicCalculate(boardState, IaSymbol, coords):
+
+    ValueGrade = [[3,4,5,7,5,4,3],[4,6,8,10,8,6,4],[5,8,11,13,11,8,5],[5,8,11,13,11,8,5],[4,6,8,10,8,6,4],[3,4,5,7,5,4,3]]
 
     heuristic = 0
+
+    if coords:
+        heuristic =  ValueGrade[coords.y][coords.x]
 
     # Segmentos horizontais
     for row in boardState:
