@@ -19,23 +19,23 @@ def heuristicVal(segment, IaSymbol):
     Human_count = segment.count(HumanSymbol)
 
     if Human_count == 4 and IA_count == 0:
-        return -512  # Valor para 4 Símbolos do humano e 0 Símbolos  da IA
+        return 512  # Valor para 4 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 3 and IA_count == 0:
-        return -50  # Valor para 3 Símbolos do humano e 0 Símbolos  da IA
+        return 50  # Valor para 3 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 2 and IA_count == 0:
-        return -10  # Valor para 2 Símbolos do humano e 0 Símbolos  da IA
+        return 10  # Valor para 2 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 1 and IA_count == 0:
-        return -1  # Valor para 1 Símbolos do humano e 0 Símbolos  da IA
+        return 1  # Valor para 1 Símbolos do humano e 0 Símbolos  da IA
     elif Human_count == 0 and IA_count == 0:
         return 0  # Sem O ou X
     elif IA_count == 1 and Human_count == 0:
-        return 1  # Valor para 1  Símbolos da IA e 0 Símbolos do humano
+        return -1  # Valor para 1  Símbolos da IA e 0 Símbolos do humano
     elif IA_count == 2 and Human_count == 0:
-        return 10  # Valor para 2  Símbolos da IA e 0 Símbolos do humano
+        return -10  # Valor para 2  Símbolos da IA e 0 Símbolos do humano
     elif IA_count == 3 and Human_count == 0:
-        return 50  # Valor para 3  Símbolos da IA e 0 Símbolos do humano
+        return -50  # Valor para 3  Símbolos da IA e 0 Símbolos do humano
     elif IA_count == 4 and Human_count == 0:
-        return 512 # Valor para 4  Símbolos da IA e 0 Símbolos do humano
+        return -512 # Valor para 4  Símbolos da IA e 0 Símbolos do humano
     else:
         return 0  #Combinação de O e X | nenhum padrão encontrado
 

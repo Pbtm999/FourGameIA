@@ -125,7 +125,7 @@ class MinMax():
                     newGame[line][column] = symbolToPlay # Atualiza esse estado com o simbolo no move a jogar
                     node = Node(Vector(column, line), newGame, None) # Cria um nó para esse move e estado
                     
-                    node.setPathCost(heuristicCalculate(game, self.MaxSymbol)) # Calcula a heurística para esse estado
+                    node.setPathCost(heuristicCalculate(game, self.MinSymbol)) # Calcula a heurística para esse estado
                     children.append(node) # adiciona esse nó á lista dos filhos
                     break
         return children

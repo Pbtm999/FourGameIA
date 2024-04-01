@@ -59,7 +59,7 @@ class Astar():
         # Escolhe o melhor nó de entre os nós filhos (ou seja aquele com melhor heurística)
         bestMoveNode = self.frontier.pop()
         while ((newNode := self.frontier.pop()) != None):
-            if newNode.pathCost > bestMoveNode.pathCost:
+            if newNode.pathCost < bestMoveNode.pathCost:
                 bestMoveNode = newNode
         
         # atualiza a monotonia para a proxima jogada da IA
