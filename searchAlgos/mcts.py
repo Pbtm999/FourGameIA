@@ -109,26 +109,26 @@ class MCTS():
 
         return bestChild
     
-    def moveRoot(self, move):
+    def moveRoot(self, move, symbol):
         if move in self.root.children:
-            self.rootState.makeMove(move+1, self.playerSymbol)
+            self.rootState.makeMove(move+1, symbol)
             self.root = self.root.children[move]
             return
 
-        self.rootState.makeMove(move+1, self.playerSymbol)
+        self.rootState.makeMove(move+1, symbol)
         self.root = Node(None, None, None)
 
 
     def play(self, _, move):
 
-        self.moveRoot(move-1)
-        print(self.rootState, self.root.children)
+        self.moveRoot(move-1, self.playerSymbol)
 
         self.search(8)
         
         mcts_move = self.bestMove().move
-        self.moveRoot(mcts_move)
-        print(self.rootState, self.root.children)
+
+        self.moveRoot(mcts_move, self.iaSymbol)
+
         self.symbol = self.iaSymbol
         
         return mcts_move
