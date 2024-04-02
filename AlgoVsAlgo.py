@@ -48,7 +48,7 @@ def AstarVsMinMax():
 
     
     
-def AstarVsMTC(): 
+def AstarVsMTCS(): 
     game = FourGame(7, 6)
     astar = Astar('O')
     mcts = MCTS('X', game)
@@ -67,7 +67,7 @@ def AstarVsMTC():
             end, invalid = showResults(game, result, winner) # Analisa e retorna a resposta junto com o tabuleiro atual
 
 
-def MinMaxVsMTC(): 
+def MinMaxVsMTCS(): 
     game = FourGame(7, 6)
     minMax = MinMax('O', 'X')
     mcts = MCTS('X', game)
@@ -87,9 +87,17 @@ def MinMaxVsMTC():
 
 
 def main():
-    # AstarVsMinMax()
-    # AstarVsMTC()
-    MinMaxVsMTC()
+
+    # Escolhe que algoritmos jogam
+    print('=======================\n| 1 -> A* vs MiniMax  |\n| 2 -> A* vs MCTS     |\n| 3 -> MinMax vs MCTS |\n=======================')
+    algoResp = int(input('Escolhe os algoritmos para jogarem: '))
+    match algoResp:
+        case 1:
+            AstarVsMinMax()
+        case 2:
+            AstarVsMTCS()
+        case 3:
+            MinMaxVsMTCS()
         
 if __name__ == '__main__':
     main()
