@@ -1,8 +1,6 @@
 from dataStructs.node import Node
 from copy import deepcopy
-from dataStructs.vector import Vector
 import random
-import math
 import time
 
 class MCTS():
@@ -22,15 +20,6 @@ class MCTS():
         else:
             self.symbol = 'X'
             return 'O'
-
-    def __getFrontier(self, state):
-        frontier = []
-        for column in range(0,7):
-            for line in range(5, -1, -1):
-                if state.state[line][column] == '-':
-                    frontier.append(Vector(column, line))
-                    break
-        return frontier
 
     def __selection(self):
         node = self.root
@@ -100,8 +89,6 @@ class MCTS():
         self.numRollouts = numRollouts
 
     def bestMove(self):
-        if self.rootState.gameOver(): # Na nossa implementação não deve entrar nisto mas no caso de avaliação de vitória ser feita pelo algoritmo é necessário
-            return -1
 
         max_value = max(self.root.children.values(), key=lambda n: (n.N != 0 and n.Q/n.N) or 0)
         max_value = (max_value.N != 0 and max_value.Q / max_value.N) or 0
@@ -128,7 +115,7 @@ class MCTS():
         self.search(16)
         
         mcts_move = self.bestMove().move
-
+        
         self.moveRoot(mcts_move, self.iaSymbol)
 
         self.symbol = self.iaSymbol
