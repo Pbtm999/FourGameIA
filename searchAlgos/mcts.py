@@ -90,9 +90,8 @@ class MCTS():
 
     def bestMove(self):
 
-        max_value = max(self.root.children.values(), key=lambda n: (n.N != 0 and n.Q/n.N) or 0)
-        max_value = (max_value.N != 0 and max_value.Q / max_value.N) or 0
-        max_nodes = [n for n in self.root.children.values() if ((n.N != 0 and n.Q/n.N) or 0) == max_value]
+        max_value = max(self.root.children.values(), key=lambda n: n.N).N
+        max_nodes = [n for n in self.root.children.values() if n.N == max_value]
         bestChild = random.choice(max_nodes)
 
         return bestChild
@@ -112,7 +111,7 @@ class MCTS():
 
         self.moveRoot((move and move-1), self.playerSymbol)
 
-        self.search(16)
+        self.search(10)
         
         mcts_move = self.bestMove().move
         
